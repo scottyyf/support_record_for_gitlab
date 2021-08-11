@@ -19,7 +19,7 @@ from GitActionURL import Ha28ActionUrl
 
 class GitDataCollect(ABC):
     env_token = os.getenv('EXCEL_API_TOKEN')
-    PRIVATE_TOKEN = env_token if env_token else 'fMSsUVyyy7A34qjiPWhM'
+    PRIVATE_TOKEN = env_token if env_token else ''
 
     def __init__(self):
         self.url_class = None
