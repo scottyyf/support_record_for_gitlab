@@ -1,0 +1,32 @@
+stages:
+  - build
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+#      variables:
+#        I_WANT_EXCEL: 'sky_gitlab_robot'
+      when: always
+    - if: $CI_COMMIT_TAG != null
+#      variables:
+#        I_WANT_EXCEL: "$GITLAB_USER_NAME"
+      when: always
+    - when: never
+
+.build_excel: &excel_config
+  image: registry.gitlab.skybilityha.com/support/ha2.5:latest
+  stage: build
+  tags:
+    - python
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_COMMIT_TAG != null
+  artifacts:
+    name: "xlsx_archive"
+    paths:
+      - XlsBot/log
+    expire_in: 30 days
+
+build25:
+  <<: *excel_config
+  script: ./XlsBot/xls_build.sh gen_xls
