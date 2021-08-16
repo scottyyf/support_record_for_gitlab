@@ -34,6 +34,7 @@ xlog.init_log(logtype=['stdout', os.getenv('I_WANT_EXCEL', 'sky_gitlab_robot')])
 
 from DataCollect import Ha28Collect
 from DataFilter import DataFilter
+from DataTransefer import DataTransfer
 
 
 def main(args):
@@ -45,11 +46,15 @@ def main(args):
     file_name = args.file
 
     try:
-        filter = DataFilter(labels)
-        data = v_to_v.get(family).do_collect(filter)
+        with DataTransfer(host=os.getenv('HOSTS'),
+                          username='root', passwd='fake123') as dt:
+            dt.download_file(file_name, file_name)
+            filter = DataFilter(labels)
+            data = v_to_v.get(family).do_collect(filter)
 
-        ex = ExcelActor(file_name, data=data, family=family)
-        ex.do()
+            ex = ExcelActor(file_name, data=data, family=family)
+            ex.do()
+            dt.upload_file(file_name, file_name)
     except Exception as e:
         logging.error(f'{e}')
         return 1
